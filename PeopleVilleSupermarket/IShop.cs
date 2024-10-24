@@ -7,9 +7,4 @@ namespace PeopleVilleSupermarket
         public List<Item> Items { get; set; }
 
     }
-
-    public class Item
-    {
-
-    }
 }
