@@ -88,7 +88,7 @@ namespace Items
 
             string jsonData = File.ReadAllText(jsonFilePath);
             var namesData = JsonSerializer.Deserialize<ItemNamesData>(jsonData);
-            foodNames = namesData.FoodNames;
+            foodNames = namesData.FoodNames; 
             electronicNames = namesData.ElectronicNames;
             toolNames = namesData.ToolNames;
         }
