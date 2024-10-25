@@ -1,4 +1,5 @@
 ﻿using PeopleVilleEngine;
+using PeopleVilleTickManager;
 Console.WriteLine("PeopleVille");
 
 //Create village
@@ -16,3 +17,5 @@ foreach (var location in village.Locations)
     }
     Console.WriteLine(locationStatus);
 }
+
+PeopleVilleTickManager.TickManager peopleVilleTickManager = new(village);

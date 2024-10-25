@@ -13,11 +13,11 @@ public class Village
 
     public Village()
     {
-        Console.WriteLine("Creating villager");
+        Console.WriteLine("Creating village");
         CreateVillage();
     }
 
-
+    
     private void CreateVillage()
     {
         var villagers = _random.Next(10, 24);
@@ -76,6 +76,6 @@ public class Village
 
     public override string ToString()
     {
-        return $"Village have {Villagers.Count} villagers, where {Villagers.Count(v => v.HasHome() == false)} are homeless.";
+        return $"Village has {Villagers.Count} villagers, where {Villagers.Count(v => v.HasHome() == false)} are homeless.";
     }
 }

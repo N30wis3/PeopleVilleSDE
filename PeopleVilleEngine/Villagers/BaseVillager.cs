@@ -9,6 +9,7 @@ public abstract class BaseVillager
     public bool IsMale { get; set; }
     private Village _village;
     public ILocation? Home { get; set; } = null;
+    public ILocation? Location { get; set; } = null;
     public bool HasHome() => Home != null;
 
     protected BaseVillager(Village village)
