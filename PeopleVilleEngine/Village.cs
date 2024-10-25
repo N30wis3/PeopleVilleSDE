@@ -23,11 +23,13 @@ public class Village
         var villagers = _random.Next(10, 24);
         Console.ForegroundColor = ConsoleColor.Red;
 
-        var villageCreators = LoadVillagerCreatorFactories();
+        var villageCreators = LoadFactories<IVillagerCreator>();
         Console.ResetColor();
         Console.WriteLine();
 
         int villageCreatorindex = 0;
+
+
 
         for (int i = 0; i < villagers; i++)
         {
@@ -39,40 +41,46 @@ public class Village
             } while (!created);
         }
 
+
         Console.ResetColor();
     }
 
-    private List<IVillagerCreator> LoadVillagerCreatorFactories()
+    private List<T> LoadFactories<T>() where T : class
     {
-        var villageCreators = new List<IVillagerCreator>();
-        //Load from this Assembly
+        var factoryList = new List<T>();
+        var interfaceType = typeof(T);
+
+        // Load from this Assembly
         IEnumerable<Type> types = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(s => s.GetTypes());
-        LoadVillagerCreatorFactoriesFromType(
-            AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()),
-            villageCreators);
+        LoadFactoriesFromType(types, factoryList, interfaceType);
 
-        //Load from library Files
+        // Load from library Files
         var libraryFiles = Directory.EnumerateFiles("lib").Where(f => Path.GetExtension(f) == ".dll");
         foreach (var libraryFile in libraryFiles)
         {
-            LoadVillagerCreatorFactoriesFromType(
+            LoadFactoriesFromType(
                 Assembly.LoadFrom(libraryFile).ExportedTypes,
-                villageCreators);
+                factoryList,
+                interfaceType);
         }
-        return villageCreators;
+
+        return factoryList;
     }
 
-    private void LoadVillagerCreatorFactoriesFromType(IEnumerable<Type> inputTypes, List<IVillagerCreator> outputVillagerCreators)
+    private void LoadFactoriesFromType<T>(IEnumerable<Type> inputTypes, List<T> outputFactories, Type interfaceType) where T : class
     {
-        var createVillagerInterface = typeof(IVillagerCreator);
-        var createrTypes = inputTypes.Where(p => createVillagerInterface.IsAssignableFrom(p) && !p.IsInterface).ToList();
-        foreach (var type in createrTypes)
+        var factoryTypes = inputTypes
+            .Where(p => interfaceType.IsAssignableFrom(p) && !p.IsInterface)
+            .ToList();
+
+        foreach (var type in factoryTypes)
         {
-            Console.WriteLine($"Village Creeater loaded: {type}");
-            outputVillagerCreators.Add((IVillagerCreator)Activator.CreateInstance(type));
+            Console.WriteLine($"Factory loaded: {type}");
+            outputFactories.Add((T)Activator.CreateInstance(type));
         }
     }
+
 
     public override string ToString()
     {

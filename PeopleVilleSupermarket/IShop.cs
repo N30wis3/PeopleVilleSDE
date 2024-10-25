@@ -1,4 +1,6 @@
 ﻿using PeopleVilleEngine.Locations;
+using PeopleVilleEngine.Items;
+using PeopleVilleEngine;
 
 namespace PeopleVilleSupermarket
 {
