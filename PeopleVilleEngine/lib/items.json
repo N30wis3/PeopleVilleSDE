@@ -1,0 +1,93 @@
+[
+  {
+    "Id": 1,
+    "Name": "Apple",
+    "Category": "Food",
+    "Value": 1,
+    "Description": "A sweet fruit"
+  },
+  {
+    "Id": 2,
+    "Name": "Banana",
+    "Category": "Food",
+    "Value": 1,
+    "Description": "A long, yellow fruit"
+  },
+  {
+    "Id": 3,
+    "Name": "Mango",
+    "Category": "Food",
+    "Value": 1,
+    "Description": "A tropical stone fruit"
+  },
+  {
+    "Id": 4,
+    "Name": "Peach",
+    "Category": "Food",
+    "Value": 1,
+    "Description": "A juicy, soft fruit"
+  },
+  {
+    "Id": 5,
+    "Name": "Chicken",
+    "Category": "Food",
+    "Value": 5,
+    "Description": "A type of poultry"
+  },
+  {
+    "Id": 6,
+    "Name": "Steak",
+    "Category": "Food",
+    "Value": 10,
+    "Description": "A cut of meat"
+  },
+  {
+    "Id": 7,
+    "Name": "Phone",
+    "Category": "Electronics",
+    "Value": 300,
+    "Description": "A portable communication device"
+  },
+  {
+    "Id": 8,
+    "Name": "Laptop",
+    "Category": "Electronics",
+    "Value": 1000,
+    "Description": "A portable personal computer"
+  },
+  {
+    "Id": 9,
+    "Name": "Shovel",
+    "Category": "Tool",
+    "Value": 15,
+    "Description": "A tool for digging"
+  },
+  {
+    "Id": 10,
+    "Name": "Knife",
+    "Category": "Tool",
+    "Value": 10,
+    "Description": "A sharp cutting instrument"
+  },
+  {
+    "Id": 11,
+    "Name": "Hammer",
+    "Category": "Tool",
+    "Value": 12,
+    "Description": "A tool for pounding nails"
+  },
+  {
+    "Id": 12,
+    "Name": "Wrench",
+    "Category": "Tool",
+    "Value": 8,
+    "Description": "A tool for gripping and turning"
+  },
+  {
+    "Id": 13,
+    "Name": "Saw",
+    "Category": "Tool",
+    "Value": 20,
+    "Description": "A tool for cutting"
+  }
+]
