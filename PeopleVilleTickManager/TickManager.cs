@@ -2,17 +2,32 @@
 using PeopleVilleEngine.Items;
 using PeopleVilleEngine.Locations;
 using PeopleVilleMovement;
+using System.Timers;
 
 namespace PeopleVilleTickManager
 {
     public class TickManager
     {
-        private int day;
-        private int hour;
+        private TickSystem tickSystem;
+
         Random ran = new Random();
+        int hour;
+        int day;
+        public void StartTicking()
+        {
+
+        }
+
         public TickManager(PeopleVilleEngine.Village village)
         {
+            tickSystem = new TickSystem(1000);
+            tickSystem.onTick += HandleTick;
             Ticker(village);
+        }
+        private void HandleTick(int tickCount)
+        {
+            Console.WriteLine($"Tick {tickCount}: Game state updated.");
+            // You can add more logic here that will execute on each tick
         }
 
         private int pricePerFood = 1; // Price per single point of food
@@ -104,6 +119,40 @@ namespace PeopleVilleTickManager
             }
 
             return items;
+        }
+    }
+    public delegate void TickHandler(int tickCount);
+    public class TickSystem
+    {
+        public event TickHandler onTick;
+
+        private int hour;
+        private int day;
+        private System.Timers.Timer timer;
+        private int tickCount = 0;
+
+        public TickSystem(double intervalMs)
+        {
+            timer = new System.Timers.Timer(intervalMs);
+            timer.Elapsed += TimerElapsed;
+        }
+
+        public void Start()
+        {
+            timer.Start();
+            Console.WriteLine("Tick system started.");
+        }
+
+        public void Stop()
+        {
+            timer.Stop();
+            Console.WriteLine("Tick system stopped.");
+        }
+
+        private void TimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            tickCount++;
+            onTick?.Invoke(tickCount);
         }
     }
 }
