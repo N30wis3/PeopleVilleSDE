@@ -3,7 +3,6 @@ using PeopleVilleEngine.Villagers.Creators;
 using PeopleVilleEngine.Locations;
 using System.Reflection;
 using System.Linq;
-using PeopleVilleEngine.Locations.Creators;
 
 public class Village
 {
@@ -24,15 +23,7 @@ public class Village
         var villagers = _random.Next(10, 24);
         Console.ForegroundColor = ConsoleColor.Red;
 
-        var libraryFiles = Directory.EnumerateFiles("lib").Where(f => Path.GetExtension(f) == ".dll");
-        foreach (var libraryFile in libraryFiles)
-        {
-            Assembly.LoadFrom(libraryFile);
-        }
-
-        var ShopCreators = LoadFactories<IShopCreator>();
-        var villageCreators = LoadFactories<IVillagerCreator>();
-        
+        var villageCreators = LoadVillagerCreatorFactories();
         Console.ResetColor();
         Console.WriteLine();
 
@@ -48,41 +39,40 @@ public class Village
             } while (!created);
         }
 
-        foreach (var creator in ShopCreators) 
-        {
-            creator.CreateShop(this);
-        }
-
         Console.ResetColor();
     }
 
-    private List<T> LoadFactories<T>() where T : class
+    private List<IVillagerCreator> LoadVillagerCreatorFactories()
     {
-        var factoryList = new List<T>();
-        var interfaceType = typeof(T);
-
+        var villageCreators = new List<IVillagerCreator>();
+        //Load from this Assembly
         IEnumerable<Type> types = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(s => s.GetTypes());
-        LoadFactoriesFromType(types, factoryList, interfaceType);
+        LoadVillagerCreatorFactoriesFromType(
+            AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()),
+            villageCreators);
 
-        return factoryList;
+        //Load from library Files
+        var libraryFiles = Directory.EnumerateFiles("lib").Where(f => Path.GetExtension(f) == ".dll");
+        foreach (var libraryFile in libraryFiles)
+        {
+            LoadVillagerCreatorFactoriesFromType(
+                Assembly.LoadFrom(libraryFile).ExportedTypes,
+                villageCreators);
+        }
+        return villageCreators;
     }
 
-
-    private void LoadFactoriesFromType<T>(IEnumerable<Type> inputTypes, List<T> outputFactories, Type interfaceType) where T : class
+    private void LoadVillagerCreatorFactoriesFromType(IEnumerable<Type> inputTypes, List<IVillagerCreator> outputVillagerCreators)
     {
-        var factoryTypes = inputTypes
-            .Where(p => interfaceType.IsAssignableFrom(p) && !p.IsInterface)
-            .ToList();
-
-        foreach (var type in factoryTypes)
+        var createVillagerInterface = typeof(IVillagerCreator);
+        var createrTypes = inputTypes.Where(p => createVillagerInterface.IsAssignableFrom(p) && !p.IsInterface).ToList();
+        foreach (var type in createrTypes)
         {
-            Console.WriteLine($"Factory loaded: {type}");
-            outputFactories.Add((T)Activator.CreateInstance(type));
+            Console.WriteLine($"Village Creeater loaded: {type}");
+            outputVillagerCreators.Add((IVillagerCreator)Activator.CreateInstance(type));
         }
     }
-
-
 
     public override string ToString()
     {
