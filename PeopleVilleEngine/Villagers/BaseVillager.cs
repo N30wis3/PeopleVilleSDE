@@ -12,6 +12,12 @@ public abstract class BaseVillager
     public ILocation? Location { get; set; } = null;
     public bool HasHome() => Home != null;
 
+    // custom test variables, not made for final build
+
+    public int Food;
+    public bool IsWorking;
+    public int Money;
+
     protected BaseVillager(Village village)
     {
         _village = village;
