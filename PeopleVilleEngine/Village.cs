@@ -3,6 +3,7 @@ using PeopleVilleEngine.Villagers.Creators;
 using PeopleVilleEngine.Locations;
 using System.Reflection;
 using System.Linq;
+using PeopleVilleEngine.Locations.Creators;
 
 public class Village
 {
@@ -23,13 +24,19 @@ public class Village
         var villagers = _random.Next(10, 24);
         Console.ForegroundColor = ConsoleColor.Red;
 
+        var libraryFiles = Directory.EnumerateFiles("lib").Where(f => Path.GetExtension(f) == ".dll");
+        foreach (var libraryFile in libraryFiles)
+        {
+            Assembly.LoadFrom(libraryFile);
+        }
+
+        var ShopCreators = LoadFactories<IShopCreator>();
         var villageCreators = LoadFactories<IVillagerCreator>();
+        
         Console.ResetColor();
         Console.WriteLine();
 
         int villageCreatorindex = 0;
-
-
 
         for (int i = 0; i < villagers; i++)
         {
@@ -41,6 +48,10 @@ public class Village
             } while (!created);
         }
 
+        foreach (var creator in ShopCreators) 
+        {
+            creator.CreateShop(this);
+        }
 
         Console.ResetColor();
     }
@@ -50,23 +61,13 @@ public class Village
         var factoryList = new List<T>();
         var interfaceType = typeof(T);
 
-        // Load from this Assembly
         IEnumerable<Type> types = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(s => s.GetTypes());
         LoadFactoriesFromType(types, factoryList, interfaceType);
 
-        // Load from library Files
-        var libraryFiles = Directory.EnumerateFiles("lib").Where(f => Path.GetExtension(f) == ".dll");
-        foreach (var libraryFile in libraryFiles)
-        {
-            LoadFactoriesFromType(
-                Assembly.LoadFrom(libraryFile).ExportedTypes,
-                factoryList,
-                interfaceType);
-        }
-
         return factoryList;
     }
+
 
     private void LoadFactoriesFromType<T>(IEnumerable<Type> inputTypes, List<T> outputFactories, Type interfaceType) where T : class
     {
@@ -80,6 +81,7 @@ public class Village
             outputFactories.Add((T)Activator.CreateInstance(type));
         }
     }
+
 
 
     public override string ToString()
