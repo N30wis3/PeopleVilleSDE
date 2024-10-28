@@ -1,4 +1,5 @@
 ﻿using PeopleVilleEngine;
+using PeopleVilleEngine.Items;
 using PeopleVilleEngine.Locations;
 using PeopleVilleMovement;
 
@@ -26,7 +27,7 @@ namespace PeopleVilleTickManager
                     float deathChance = villager.Age / 25; // TODO: Balance this
                     if (ran.Next(0, Convert.ToInt32(Math.Round(deathChance))) == 0) // TODO: Seperate these two conditions into seperate statements which run the same method with different parameters
                     {
-                        Die(location, villager, "complications");
+                        Die(location, villager, "unknown causes");
                     }
                     else if (villager.Food == 0)
                     {
@@ -36,12 +37,24 @@ namespace PeopleVilleTickManager
                     if (villager.IsWorking) { villager.Food -= 2; }
                     else { villager.Food -= 1; }
 
-                    if (villager.Food <= 20) // TODO: Seperate into own method
+                    if (GetFoodItems(villager).Count <= villager.Location.Villagers().Count * 2) // TODO: Seperate into own method
                     {
                         
                         if (villager.Money >= (100 - villager.Food) * pricePerFood)
                         {
                             villager.Money -= (100 - villager.Food) * pricePerFood;
+                        }
+                    }
+
+                    if (villager.Food <= 20)
+                    {
+                        if (GetFoodItems(villager).Count != 0)
+                        {
+                            Eat(villager);
+                        }
+                        else
+                        {
+                            BuyFood(villager);
                         }
                     }
 
@@ -56,6 +69,18 @@ namespace PeopleVilleTickManager
             Ticker(village);
         }
 
+        void BuyFood(BaseVillager villager)
+        {
+            //villager.Location =
+            Console.WriteLine($"{villager.FirstName} {villager.LastName} has gone to the supermarket to buy food");
+        }
+
+        void Eat(BaseVillager villager)
+        {
+            villager.Items.Remove(GetFoodItems(villager).First());
+            villager.Food += 10;
+        }
+
         void Die(ILocation location, BaseVillager villager, string cause)
         {
             Console.WriteLine($"{villager.FirstName} {villager.LastName} has died at the age of {villager.Age} due to {cause}.");
@@ -65,6 +90,20 @@ namespace PeopleVilleTickManager
             {
                 Console.WriteLine($"{location.Name} has been abandoned due to lack of inhabitants, {villager.FirstName} {villager.LastName} was the last inhabitant");
             }
+        }
+
+        List<Item> GetFoodItems(BaseVillager villager)
+        {
+            List<Item> items = new List<Item>();
+            foreach (var item in villager.Items)
+            {
+                if (item.Category == ItemCategory.Food)
+                {
+                    items.Add(item);
+                }
+            }
+
+            return items;
         }
     }
 }
