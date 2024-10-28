@@ -10,8 +10,13 @@ public abstract class BaseVillager
     public bool IsMale { get; set; }
     private Village _village;
     public ILocation? Home { get; set; } = null;
+    public ILocation Location { get; set; } = null;
     public bool HasHome() => Home != null;
     public List<Item> Items { get; set; } = new List<Item>();
+    public int Food { get; set; }
+    public int Money = 100;
+    public string WorkPlace { get; set; }
+
 
     protected BaseVillager(Village village)
     {

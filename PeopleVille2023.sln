@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeopleVilleEngine", "People
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeopleVilleVillagerHomeless", "PeopleVilleVillagerHomeless\PeopleVilleVillagerHomeless.csproj", "{9FDFCE2C-71D0-469C-A774-BC847846BCCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jobs", "Jobs\Jobs.csproj", "{21B17FA0-0369-41D1-A79D-71179A693A5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jobs", "Jobs\Jobs.csproj", "{21B17FA0-0369-41D1-A79D-71179A693A5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeopleVilleTickManager", "PeopleVilleTickManager\PeopleVilleTickManager.csproj", "{7CABA3E8-7A98-4E05-893C-402C8F9868D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{21B17FA0-0369-41D1-A79D-71179A693A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21B17FA0-0369-41D1-A79D-71179A693A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21B17FA0-0369-41D1-A79D-71179A693A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CABA3E8-7A98-4E05-893C-402C8F9868D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CABA3E8-7A98-4E05-893C-402C8F9868D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CABA3E8-7A98-4E05-893C-402C8F9868D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CABA3E8-7A98-4E05-893C-402C8F9868D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

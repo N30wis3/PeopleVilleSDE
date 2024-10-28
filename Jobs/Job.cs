@@ -9,10 +9,10 @@ namespace Jobs
     {
         private readonly RNG random = RNG.GetInstance();
 
-        public string Name { private get; set; }
+        public string Name { get; private set; }
         //public int ID { private get; set; }
-        public int Salary { private get; set; }
-        public List<AdultVillager> Workers = new List<AdultVillager>(); //Only adults can work thihihihihihihihi
+        public int Salary { get; private set; }
+        public List<BaseVillager> Workers = new List<BaseVillager>();
         public static int MaxWorkers = 10;
 
         private static readonly string jsonFilePath = @"lib\\JobNames.json";
@@ -25,6 +25,7 @@ namespace Jobs
             Job job = new Job();
             int randomNumber = random.Next(jobNames.Length);
 
+            //select random job name
             job.Name = jobNames[randomNumber];
             //job.ID = 0; //idk man i just got here
             job.Salary = random.Next(10, 101);
