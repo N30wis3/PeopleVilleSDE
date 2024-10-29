@@ -8,24 +8,14 @@
         Title="MainWindow" Height="800" Width="1280" Background="#333" WindowStyle="None" ResizeMode="NoResize">
     <Grid>
         
-        <DockPanel Name="CloMinMaxPanel" Background="DarkBlue" Height="30" Width="70" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="5">
-            <!-- minimize button -->
-            <Button Name="minBtn" Width="30" HorizontalAlignment="Left" BorderBrush="Transparent" Margin="2" Click="OnClikMin">
-                <Button.Background>
-                    <ImageBrush ImageSource="https://icons.veryicon.com/png/o/education-technology/calculator/minus-sign-9.png"/>
-                </Button.Background>
-            </Button>
-            <!-- close button-->
-            <Button Name="CloseBtn" Width="30" HorizontalAlignment="Right" BorderBrush="Transparent" Margin="2" Click="OnClikClose">
-                <Button.Background>
-                    <ImageBrush ImageSource="https://www.pngall.com/wp-content/uploads/10/Plus-Symbol-Vector-PNG-Cutout.png"/>
-                </Button.Background>
-            </Button>
+        <!--day time population-->
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin=" 80 0 0 0" Width="200" Height="80" >
+            <Label Content="Day:" Foreground="white"></Label>
+            <Label Content="Time:" Foreground="white" ></Label>
+            <Label Content="Population:" Foreground="white"></Label>
+        </StackPanel>
 
-
-        </DockPanel>
-
-        <StackPanel Height="auto" Width="80" VerticalAlignment="Top" HorizontalAlignment="Left">
+        <StackPanel Height="auto" Width="80" VerticalAlignment="Top" HorizontalAlignment="Left"> 
             <!-- Population button -->
             <Button x:Name="Population" Margin="10"  Height="50" Background="Transparent" BorderBrush="Bisque" Click="Populations_Click" >
                 <Button.Template>
@@ -48,14 +38,16 @@
                 </Button.Template>
             </Button>
             <Label HorizontalAlignment="Center" Padding="0" Content="Locations" Foreground="white"/>
-            
+
+           
+
             <!-- add more buttons if you need -->
             
         </StackPanel>
         <!-- StackPanel that holds the additional buttons from location (Houses and Factorys) -->
-        <StackPanel x:Name="LocationsPanel" VerticalAlignment="Top" HorizontalAlignment="Left" Height="120" Width="80" Margin="80 90"   Visibility="Collapsed">
+        <StackPanel x:Name="LocationsPanel" VerticalAlignment="Top" HorizontalAlignment="Left" Height="auto" Width="80" Margin="80 90"   Visibility="Collapsed">
             <!-- button design for houses-->
-            <Button x:Name="Houses" Height="50" Width="60" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5 5" Content="Houses" Background="Transparent" BorderBrush="Bisque"  Foreground="white">
+            <Button x:Name="Houses" Height="50" Width="60" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5 5" Content="Houses" Background="Transparent" BorderBrush="Bisque"  Foreground="white" Click="House_Click">
                 <Button.Template>
                     <ControlTemplate TargetType="Button" >
                         <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="10"  >
@@ -65,7 +57,7 @@
                 </Button.Template>
             </Button>
             <!-- button design for factory -->
-            <Button x:Name="Factorys" Height="50" Width="60" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5 5" Content="Factorys" Background="Transparent" BorderBrush="Bisque"  Foreground="white">
+            <Button x:Name="Work" Height="50" Width="60" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5 5" Content="Works" Background="Transparent" BorderBrush="Bisque"  Foreground="white" Click="Work_Click">
                 <Button.Template>
                     <ControlTemplate TargetType="Button" >
                         <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="10" >
@@ -74,11 +66,25 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
+
+            <Button x:Name="Stores" Height="50" Width="60" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5 5" Content="Stores" Background="Transparent" BorderBrush="Bisque"  Foreground="white" Click="Stores_Click">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button" >
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="10" >
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
         </StackPanel>
+        
+        
+        
 
         <!-- population design -->
-        <StackPanel x:Name="population" Margin="80 0 0 0"  Visibility="Collapsed" >
-            <ScrollViewer x:Name="scrollViewer" VerticalScrollBarVisibility="Auto" Height="auto" VerticalAlignment="Top" Margin="0,0,0,0">
+        <StackPanel x:Name="population" Margin="80 0 0 0"  Visibility="Collapsed">
+            <ScrollViewer x:Name="scrollViewer" VerticalScrollBarVisibility="Auto" Height="auto" VerticalAlignment="Top" Margin="0,0,0,0" >
                 <StackPanel>
                     
                     <StackPanel Width="auto" Height="auto" VerticalAlignment="Top" Margin="0,0,0,20">
@@ -168,5 +174,200 @@
                 </StackPanel>
             </ScrollViewer>
         </StackPanel>
+
+        <!--houses location design-->
+        <StackPanel x:Name="houses" Margin="80 0 0 0"  Visibility="Collapsed" >
+            <ScrollViewer x:Name="scrollViewer1" VerticalScrollBarVisibility="Auto" Height="auto" VerticalAlignment="Top" Margin="0,0,0,0" >
+                <StackPanel>
+
+                    <StackPanel Width="auto" Height="auto" VerticalAlignment="Top" Margin="0,0,0,20">
+                        <!-- title -->
+                        <Label Height="auto" Width="auto" HorizontalAlignment="Center" FontSize="50" Foreground="White" VerticalAlignment="Top" Padding="10" FontStyle="Normal" FontFamily="Sitka Text" >
+                            Houses in vilage
+                        </Label>
+                        <Separator Margin="0,0,0,10"></Separator>
+
+
+                        <StackPanel >
+                            <DockPanel Height="100" Width="Auto" HorizontalAlignment="Center" Margin="0  0 0 0" >
+                                <DockPanel.Background>
+                                    <!-- image -->
+                                    <ImageBrush AlignmentX="Left" ImageSource="https://prod.rockmedialibrary.com/api/public/content/c75dce0bc2714ce8b23c20fb49628bfa?v=5fdae3b6"   Stretch="Uniform"/>
+                                </DockPanel.Background>
+
+                                <DockPanel>
+                                    <StackPanel Width="350" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="300 0 0 0">
+                                        <Border BorderThickness="2,0,2,2" BorderBrush="#CC8F00" CornerRadius="5,5,10,10">
+                                            <!-- persons informations -->
+                                            <Label  Width="auto" FontSize="10" HorizontalContentAlignment="Left" Foreground="White" Padding="10" FontStyle="Normal" FontFamily="Sitka Text">
+
+                                                <TextBlock TextAlignment="Left" Width="340">
+                 House name: <LineBreak/>
+Population: <LineBreak/>
+Adress: <LineBreak/>
+Phone Number:
+                                                </TextBlock>
+
+
+                                            </Label>
+
+                                        </Border>
+
+                                    </StackPanel>
+
+                                </DockPanel>
+
+
+
+                            </DockPanel>
+                            
+                        </StackPanel>
+
+
+                        <!-- separeting line between people -->
+                        <Separator Margin="0,10,0,10"></Separator>
+
+                        <!-- add more people if you need -->
+
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </StackPanel>
+
+        <!--Work location design-->
+        <StackPanel x:Name="work" Margin="80 0 0 0"  Visibility="Collapsed" >
+            <ScrollViewer x:Name="scrollViewer2" VerticalScrollBarVisibility="Auto" Height="auto" VerticalAlignment="Top" Margin="0,0,0,0" >
+                <StackPanel>
+
+                    <StackPanel Width="auto" Height="auto" VerticalAlignment="Top" Margin="0,0,0,20">
+                        <!-- title -->
+                        <Label Height="auto" Width="auto" HorizontalAlignment="Center" FontSize="50" Foreground="White" VerticalAlignment="Top" Padding="10" FontStyle="Normal" FontFamily="Sitka Text" >
+                            Work in vilage
+                        </Label>
+                        <Separator Margin="0,0,0,10"></Separator>
+
+
+                        <StackPanel >
+                            <DockPanel Height="100" Width="Auto" HorizontalAlignment="Center" Margin="0  0 0 0" >
+                                <DockPanel.Background>
+                                    <!-- image -->
+                                    <ImageBrush AlignmentX="Left" ImageSource="https://prod.rockmedialibrary.com/api/public/content/c75dce0bc2714ce8b23c20fb49628bfa?v=5fdae3b6"   Stretch="Uniform"/>
+                                </DockPanel.Background>
+
+                                <DockPanel>
+                                    <StackPanel Width="350" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="300 0 0 0">
+                                        <Border BorderThickness="2,0,2,2" BorderBrush="#CC8F00" CornerRadius="5,5,10,10">
+                                            <!-- persons informations -->
+                                            <Label  Width="auto" FontSize="10" HorizontalContentAlignment="Left" Foreground="White" Padding="10" FontStyle="Normal" FontFamily="Sitka Text">
+
+                                                <TextBlock TextAlignment="Left" Width="340">
+                 Work name: <LineBreak/>
+Population: <LineBreak/>
+Adress: <LineBreak/>
+Phone Number:
+                                                </TextBlock>
+
+
+                                            </Label>
+
+                                        </Border>
+
+                                    </StackPanel>
+
+                                </DockPanel>
+
+
+
+                            </DockPanel>
+
+                        </StackPanel>
+
+
+                        <!-- separeting line between people -->
+                        <Separator Margin="0,10,0,10"></Separator>
+
+                        <!-- add more people if you need -->
+
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </StackPanel>
+
+
+        <!--Stors location design-->
+        <StackPanel x:Name="store" Margin="80 0 0 0"  Visibility="Collapsed"  >
+            <ScrollViewer x:Name="scrollViewer3" VerticalScrollBarVisibility="Auto" Height="auto" VerticalAlignment="Top" Margin="0,0,0,0" >
+                <StackPanel>
+
+                    <StackPanel Width="auto" Height="auto" VerticalAlignment="Top" Margin="0,0,0,20">
+                        <!-- title -->
+                        <Label Height="auto" Width="auto" HorizontalAlignment="Center" FontSize="50" Foreground="White" VerticalAlignment="Top" Padding="10" FontStyle="Normal" FontFamily="Sitka Text" >
+                            Stors in vilage
+                        </Label>
+                        <Separator Margin="0,0,0,10"></Separator>
+
+
+                        <StackPanel >
+                            <DockPanel Height="100" Width="Auto" HorizontalAlignment="Center" Margin="0  0 0 0" >
+                                <DockPanel.Background>
+                                    <!-- image -->
+                                    <ImageBrush AlignmentX="Left" ImageSource="https://prod.rockmedialibrary.com/api/public/content/c75dce0bc2714ce8b23c20fb49628bfa?v=5fdae3b6"   Stretch="Uniform"/>
+                                </DockPanel.Background>
+
+                                <DockPanel>
+                                    <StackPanel Width="350" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="300 0 0 0">
+                                        <Border BorderThickness="2,0,2,2" BorderBrush="#CC8F00" CornerRadius="5,5,10,10">
+                                            <!-- persons informations -->
+                                            <Label  Width="auto" FontSize="10" HorizontalContentAlignment="Left" Foreground="White" Padding="10" FontStyle="Normal" FontFamily="Sitka Text">
+
+                                                <TextBlock TextAlignment="Left" Width="340">
+                 Store name: <LineBreak/>
+Population: <LineBreak/>
+Adress: <LineBreak/>
+Phone Number:
+                                                </TextBlock>
+
+
+                                            </Label>
+
+                                        </Border>
+
+                                    </StackPanel>
+
+                                </DockPanel>
+
+
+
+                            </DockPanel>
+
+                        </StackPanel>
+
+
+                        <!-- separeting line between people -->
+                        <Separator Margin="0,10,0,10"></Separator>
+
+                        <!-- add more people if you need -->
+
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </StackPanel>
+
+        <DockPanel Name="CloMinMaxPanel" Background="DarkBlue" Height="30" Width="70" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="5">
+            <!-- minimize button -->
+            <Button Name="minBtn" Width="30" HorizontalAlignment="Left" BorderBrush="Transparent" Margin="2" Click="OnClikMin">
+                <Button.Background>
+                    <ImageBrush ImageSource="https://icons.veryicon.com/png/o/education-technology/calculator/minus-sign-9.png"/>
+                </Button.Background>
+            </Button>
+            <!-- close button-->
+            <Button Name="CloseBtn" Width="30" HorizontalAlignment="Right" BorderBrush="Transparent" Margin="2" Click="OnClikClose">
+                <Button.Background>
+                    <ImageBrush ImageSource="https://www.pngall.com/wp-content/uploads/10/Plus-Symbol-Vector-PNG-Cutout.png"/>
+                </Button.Background>
+            </Button>
+
+
+        </DockPanel>
     </Grid>
 </Window>
