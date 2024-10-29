@@ -18,4 +18,10 @@ foreach (var location in village.Locations)
     Console.WriteLine(locationStatus);
 }
 
+// Initialize and start the tick manager
 PeopleVilleTickManager.TickManager peopleVilleTickManager = new(village);
+peopleVilleTickManager.StartTicking(); // Start the ticking process
+
+Console.WriteLine("Press Enter to stop the application...");
+// Keep the application running by waiting for an Enter key press
+Console.ReadLine();
