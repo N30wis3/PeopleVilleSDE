@@ -16,9 +16,10 @@ public abstract class BaseVillager
 
     // custom test variables, not made for final build
 
-    public int Food;
-    public bool IsWorking;
-    public int Money;
+    public int Food { get; set; }
+    public int Money { get; set; }
+    public int Health { get; set; }
+
 
     protected BaseVillager(Village village)
     {
@@ -30,10 +31,120 @@ public abstract class BaseVillager
         {
             Items.Add(ITH.GetRandomItem());
         }
+        Food = 100;
+        Money = 100;
+        Health = 100;
     }
 
     public override string ToString()
     {
         return $"{FirstName} {LastName} ({Age} years) | Items: {string.Join(", ", Items.Select(item => item.Name))}";
+    }
+
+    public string FullName()
+    {
+        return $"{FirstName} {LastName}";
+    }
+
+    public void Die(string cause)
+    {
+        Console.WriteLine($"{FullName()} has died at the age of {Age} due to {cause}.");
+
+        if (Home == null) Location.Villagers().Remove(this);
+        else Home.Villagers().Remove(this);
+
+        if (Home?.Villagers().Count == 0)
+        {
+            Console.WriteLine($"{Home.Name} has been abandoned due to lack of inhabitants; {FullName()} was the last inhabitant.");
+        }
+    }
+
+    public void Eat()
+    {
+        Item foodItem = GetInventoryItems(ItemCategory.Food).OrderByDescending(f => f.Value).First();
+        if (foodItem != null)
+        {
+            Items.Remove(foodItem);
+            Food = Math.Clamp(Food + foodItem.Value * 4, 0, 100);
+            RegenHealth(foodItem.Value);
+            Console.WriteLine($"{FullName()} ate {foodItem.Name}, current hunger level: {Food}");
+        }
+        else // This should never happen, but I made it just in case.
+        {
+            Console.WriteLine($"{FullName()} has no more food left");
+        }
+    }
+
+    public void LoseHealth(int amount)
+    {
+        Health = Math.Clamp(Health - amount, 0, 100);
+    }
+
+    public void RegenHealth(int amount)
+    {
+        Health = Math.Clamp(Health + amount, 0, 100);
+    }
+
+    public void BuyFood()
+    {
+        // TODO: if location is already supermarket, don't print this message
+        Console.WriteLine($"{FullName()} has gone to the supermarket to buy food.");
+
+        int totalItems = 0;
+
+        ItemHandler itemHandler = ItemHandler.GetInstance();
+
+        // Buys 10 at once (Or as close as it can get)
+        while (totalItems <= 10 && Money >= itemHandler.GetItemsByCategory(ItemCategory.Food).OrderBy(f => f.Value).First().Value)
+        {
+            foreach (Item item in itemHandler.GetItemsByCategory(ItemCategory.Food).OrderByDescending(f => f.Value))
+            {
+                if (Money >= item.Value)
+                {
+                    Items.Add(item);
+                    Money -= item.Value;
+                    totalItems++;
+                    Console.WriteLine($"{FullName()} has bought {item.Name} at the supermarket for {item.Value}, remaining balance: {Money}$");
+                    break;
+                }
+            }
+        }
+    }
+
+    public void Trade()
+    {
+        ItemHandler itemHandler = ItemHandler.GetInstance();
+
+        Item wantedItem = itemHandler.GetRandomItem();
+
+        foreach (var location in _village.Locations)
+        {
+            foreach (var villager in location.Villagers())
+            {
+                if (villager != this && villager.Items.Contains(wantedItem) && Money >= wantedItem.Value + 50) // Adds 50 to ensure that villagers don't bankrupt themselves and starve.
+                {
+                    villager.Items.Remove(wantedItem);
+                    villager.Money += wantedItem.Value;
+                    Items.Add(wantedItem);
+                    Money -= wantedItem.Value;
+                    Console.WriteLine($"{FullName()} bought {wantedItem.Name.ToLower()} off of {villager.FullName()} for {wantedItem.Value}");
+                }
+            }
+        }
+    }
+
+    public bool IsWorking() // TODO: Check if villager is at work location
+    {
+        return false;
+    }
+
+    public List<Item> GetInventoryItems(ItemCategory category)
+    {
+        return Items.FindAll(item => item.Category == category);
+    }
+
+    public int GetAmountOfInventoryItems(ItemCategory category)
+    {
+        return GetInventoryItems(category).Count;
     }
 }

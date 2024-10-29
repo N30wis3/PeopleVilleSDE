@@ -78,4 +78,18 @@ public class Village
     {
         return $"Village has {Villagers.Count} villagers, where {Villagers.Count(v => v.HasHome() == false)} are homeless.";
     }
+
+    public int CountPopulation()
+    {
+        int villagers = 0;
+        foreach (var location in Locations)
+        {
+            foreach (var villager in location.Villagers())
+            {
+                villagers++;
+            }
+        }
+
+        return villagers;
+    }
 }

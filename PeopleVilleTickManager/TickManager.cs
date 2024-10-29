@@ -1,7 +1,9 @@
 ﻿using PeopleVilleEngine;
 using PeopleVilleEngine.Items;
 using PeopleVilleEngine.Locations;
-using PeopleVilleMovement;
+using System;
+using System.Collections.Generic;
+using System.IO.IsolatedStorage;
 using System.Timers;
 
 namespace PeopleVilleTickManager
@@ -9,125 +11,93 @@ namespace PeopleVilleTickManager
     public class TickManager
     {
         private TickSystem tickSystem;
-
-        Random ran = new Random();
-        int hour;
-        int day;
-        public void StartTicking()
-        {
-
-        }
+        private PeopleVilleEngine.Village village;
 
         public TickManager(PeopleVilleEngine.Village village)
         {
-            tickSystem = new TickSystem(1000);
-            tickSystem.onTick += HandleTick;
-            Ticker(village);
+            this.village = village;
+            tickSystem = new(500); // Ticks every second
+            tickSystem.OnTick += HandleTick;
         }
+
+        public void StartTicking()
+        {
+            tickSystem.Start();
+        }
+
+        private int hour = 0;
+        private int day = 0;
+
         private void HandleTick(int tickCount)
         {
-            Console.WriteLine($"Tick {tickCount}: Game state updated.");
-            // You can add more logic here that will execute on each tick
-        }
+            Console.WriteLine($"\nTick {tickCount}: Game state updated. Day {day}, hour {hour}");
 
-        private int pricePerFood = 1; // Price per single point of food
+            if (village.CountPopulation() == 0)
+            {
+                Console.WriteLine($"All villagers have died, amount of days passed: {day}");
+                tickSystem.OnTick -= HandleTick;
+            }
 
-        async void Ticker(PeopleVilleEngine.Village village)
-        {
-            if (hour == 25) { hour = 0; day++; }
+            if (hour >= 24) // Reset hour and increment day at the end of a full day
+            {
+                hour = 0;
+                day++;
+            }
+
             foreach (var location in village.Locations)
             {
-                foreach (var villager in location.Villagers() )
+                foreach (var villager in location.Villagers())
                 {
-                    float deathChance = villager.Age / 25; // TODO: Balance this
-                    if (ran.Next(0, Convert.ToInt32(Math.Round(deathChance))) == 0) // TODO: Seperate these two conditions into seperate statements which run the same method with different parameters
-                    {
-                        Die(location, villager, "unknown causes");
-                    }
-                    else if (villager.Food == 0)
-                    {
-                        Die(location, villager, "starvations");
-                    }
-
-                    if (villager.IsWorking) { villager.Food -= 2; }
-                    else { villager.Food -= 1; }
-
-                    if (GetFoodItems(villager).Count <= villager.Location.Villagers().Count * 2) // TODO: Seperate into own method
-                    {
-                        
-                        if (villager.Money >= (100 - villager.Food) * pricePerFood)
-                        {
-                            villager.Money -= (100 - villager.Food) * pricePerFood;
-                        }
-                    }
-
-                    if (villager.Food <= 20)
-                    {
-                        if (GetFoodItems(villager).Count != 0)
-                        {
-                            Eat(villager);
-                        }
-                        else
-                        {
-                            BuyFood(villager);
-                        }
-                    }
-
-                    // TODO:
-                    // Add a chance for a villager to trade with another villager by choosing a wanted item,
-                    // running a loop to find a villager who is in possesion of that item and buy it for a price which is in range of the item value
+                    ProcessVillagerActions(location, villager);
                 }
             }
-            Console.WriteLine("running...");
             hour++;
-            await Task.Delay(50);
-            Ticker(village);
         }
 
-        void BuyFood(BaseVillager villager)
+        private void ProcessVillagerActions(ILocation location, BaseVillager villager)
         {
-            //villager.Location =
-            Console.WriteLine($"{villager.FirstName} {villager.LastName} has gone to the supermarket to buy food");
-        }
+            // Function: y = (0.1 * x)^2 + 1000.
+            int deathChance = Convert.ToInt32(Math.Round(Math.Pow(Math.Round(0.1f * villager.Age), 2) + 1000)); // A 40 year old has around a 0,15% chance of dying randomly. 
 
-        void Eat(BaseVillager villager)
-        {
-            villager.Items.Remove(GetFoodItems(villager).First());
-            villager.Food += 10;
-        }
+            Random ran = new();
 
-        void Die(ILocation location, BaseVillager villager, string cause)
-        {
-            Console.WriteLine($"{villager.FirstName} {villager.LastName} has died at the age of {villager.Age} due to {cause}.");
-            location.Villagers().Remove(villager);
-
-            if (location.Villagers().Count == 0)
+            if (villager.Health == 0)
             {
-                Console.WriteLine($"{location.Name} has been abandoned due to lack of inhabitants, {villager.FirstName} {villager.LastName} was the last inhabitant");
+                villager.Die("starvation");
+                return;
             }
-        }
-
-        List<Item> GetFoodItems(BaseVillager villager)
-        {
-            List<Item> items = new List<Item>();
-            foreach (var item in villager.Items)
+            else if (ran.Next(0, deathChance) == 0)
             {
-                if (item.Category == ItemCategory.Food)
-                {
-                    items.Add(item);
-                }
+                villager.Die("unknown causes");
+                return;
             }
 
-            return items;
+            if (ran.Next(0, 100) == 0) villager.Trade();
+
+            if (!villager.IsWorking())
+            {
+                // Meant to simulate that the villager eats food supplied by their work, hunger drain during work is turned off to not trigger the Eat method.
+                if (!villager.IsWorking()) villager.Food = Math.Clamp(villager.Food - 5, 0, 100);
+
+                //Math.Clamp(villager.Food -= villager.IsWorking() ? 5 : 2, 0, 100);
+
+                // If villager has less than 5 food items, buy more. This should prevent villagers from starving to death too easily.
+                if (villager.GetAmountOfInventoryItems(ItemCategory.Food) <= 5) villager.BuyFood();
+            }
+
+            // Drain health if villager is starving.
+            if (villager.Food == 0) villager.LoseHealth(2);
+
+            // Eat if villager owns food.
+            if (villager.Food <= 25 && villager.GetAmountOfInventoryItems(ItemCategory.Food) > 0) villager.Eat();
         }
     }
+
     public delegate void TickHandler(int tickCount);
+
     public class TickSystem
     {
-        public event TickHandler onTick;
-
-        private int hour;
-        private int day;
+        public event TickHandler OnTick;
         private System.Timers.Timer timer;
         private int tickCount = 0;
 
@@ -152,7 +122,7 @@ namespace PeopleVilleTickManager
         private void TimerElapsed(object sender, ElapsedEventArgs e)
         {
             tickCount++;
-            onTick?.Invoke(tickCount);
+            OnTick?.Invoke(tickCount);
         }
     }
 }
