@@ -3,6 +3,7 @@ using PeopleVilleEngine.Villagers.Creators;
 using PeopleVilleEngine.Locations;
 using System.Reflection;
 using System.Linq;
+using PeopleVilleEngine.Locations.Creators;
 
 public class Village
 {
@@ -13,17 +14,25 @@ public class Village
 
     public Village()
     {
-        Console.WriteLine("Creating village");
+        Console.WriteLine("Creating villager");
         CreateVillage();
     }
 
-    
+
     private void CreateVillage()
     {
         var villagers = _random.Next(10, 24);
         Console.ForegroundColor = ConsoleColor.Red;
 
-        var villageCreators = LoadVillagerCreatorFactories();
+        var libraryFiles = Directory.EnumerateFiles("lib").Where(f => Path.GetExtension(f) == ".dll");
+        foreach (var libraryFile in libraryFiles)
+        {
+            Assembly.LoadFrom(libraryFile);
+        }
+
+        var ShopCreators = LoadFactories<IShopCreator>();
+        var villageCreators = LoadFactories<IVillagerCreator>();
+        
         Console.ResetColor();
         Console.WriteLine();
 
@@ -39,44 +48,42 @@ public class Village
             } while (!created);
         }
 
+        foreach (var creator in ShopCreators) 
+        {
+            creator.CreateShop(this);
+        }
+
         Console.ResetColor();
     }
 
-    private List<IVillagerCreator> LoadVillagerCreatorFactories()
+    private List<T> LoadFactories<T>() where T : class
     {
-        var villageCreators = new List<IVillagerCreator>();
-        //Load from this Assembly
+        var factoryList = new List<T>();
+        var interfaceType = typeof(T);
+
         IEnumerable<Type> types = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(s => s.GetTypes());
-        LoadVillagerCreatorFactoriesFromType(
-            AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes()),
-            villageCreators);
+        LoadFactoriesFromType(types, factoryList, interfaceType);
 
-        //Load from library Files
-        var libraryFiles = Directory.EnumerateFiles("lib").Where(f => Path.GetExtension(f) == ".dll");
-        foreach (var libraryFile in libraryFiles)
-        {
-            LoadVillagerCreatorFactoriesFromType(
-                Assembly.LoadFrom(libraryFile).ExportedTypes,
-                villageCreators);
-        }
-        return villageCreators;
+        return factoryList;
     }
 
-    private void LoadVillagerCreatorFactoriesFromType(IEnumerable<Type> inputTypes, List<IVillagerCreator> outputVillagerCreators)
+
+    private void LoadFactoriesFromType<T>(IEnumerable<Type> inputTypes, List<T> outputFactories, Type interfaceType) where T : class
     {
-        var createVillagerInterface = typeof(IVillagerCreator);
-        var createrTypes = inputTypes.Where(p => createVillagerInterface.IsAssignableFrom(p) && !p.IsInterface).ToList();
-        foreach (var type in createrTypes)
+        var factoryTypes = inputTypes
+            .Where(p => interfaceType.IsAssignableFrom(p) && !p.IsInterface)
+            .ToList();
+
+        foreach (var type in factoryTypes)
         {
-            Console.WriteLine($"Village Creeater loaded: {type}");
-            outputVillagerCreators.Add((IVillagerCreator)Activator.CreateInstance(type));
+            Console.WriteLine($"Factory loaded: {type}");
+            outputFactories.Add((T)Activator.CreateInstance(type));
         }
     }
-
     public override string ToString()
     {
-        return $"Village has {Villagers.Count} villagers, where {Villagers.Count(v => v.HasHome() == false)} are homeless.";
+        return $"Village have {Villagers.Count} villagers, where {Villagers.Count(v => v.HasHome() == false)} are homeless.";
     }
 
     public int CountPopulation()

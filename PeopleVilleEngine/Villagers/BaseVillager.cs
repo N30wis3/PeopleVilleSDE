@@ -61,11 +61,12 @@ public abstract class BaseVillager
 
     public void Eat()
     {
+        RNG ran = RNG.GetInstance();
         Item foodItem = GetInventoryItems(ItemCategory.Food).OrderByDescending(f => f.Value).First();
         if (foodItem != null)
         {
             Items.Remove(foodItem);
-            Food = Math.Clamp(Food + foodItem.Value * 4, 0, 100);
+            Food = Math.Clamp(Food + foodItem.Value * ran.Next(3,5), 0, 100);
             RegenHealth(foodItem.Value);
             Console.WriteLine($"{FullName()} ate {foodItem.Name}, current hunger level: {Food}");
         }
@@ -87,27 +88,33 @@ public abstract class BaseVillager
 
     public void BuyFood()
     {
-        // TODO: if location is already supermarket, don't print this message
-        Console.WriteLine($"{FullName()} has gone to the supermarket to buy food.");
-
-        int totalItems = 0;
-
-        ItemHandler itemHandler = ItemHandler.GetInstance();
-
-        // Buys 10 at once (Or as close as it can get)
-        while (totalItems <= 10 && Money >= itemHandler.GetItemsByCategory(ItemCategory.Food).OrderBy(f => f.Value).First().Value)
+        if (Location == _village.Locations.Find(location => location.Name == "Supermarket"))
         {
-            foreach (Item item in itemHandler.GetItemsByCategory(ItemCategory.Food).OrderByDescending(f => f.Value))
+            Console.WriteLine($"{FullName()} has gone to the supermarket to buy food.");
+
+
+            int totalItems = 0;
+
+            ItemHandler itemHandler = ItemHandler.GetInstance();
+
+            // Buys 10 at once (Or as close as it can get)
+            while (totalItems <= 10 && Money >= itemHandler.GetItemsByCategory(ItemCategory.Food).OrderBy(f => f.Value).First().Value)
             {
-                if (Money >= item.Value)
+                foreach (Item item in itemHandler.GetItemsByCategory(ItemCategory.Food).OrderByDescending(f => f.Value))
                 {
-                    Items.Add(item);
-                    Money -= item.Value;
-                    totalItems++;
-                    Console.WriteLine($"{FullName()} has bought {item.Name} at the supermarket for {item.Value}, remaining balance: {Money}$");
-                    break;
+                    if (Money >= item.Value)
+                    {
+                        Items.Add(item);
+                        Money -= item.Value;
+                        totalItems++;
+                        Console.WriteLine($"{FullName()} has bought {item.Name} at the supermarket for {item.Value}, remaining balance: {Money}$");
+                        break;
+                    }
                 }
             }
+
+            Location = Home;
+            Console.WriteLine($"{FullName()} has gone home from the supermarket.");
         }
     }
 

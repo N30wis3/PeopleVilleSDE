@@ -59,7 +59,7 @@ namespace PeopleVilleTickManager
             // Function: y = (0.1 * x)^2 + 1000.
             int deathChance = Convert.ToInt32(Math.Round(Math.Pow(Math.Round(0.1f * villager.Age), 2) + 1000)); // A 40 year old has around a 0,15% chance of dying randomly. 
 
-            Random ran = new();
+            RNG ran = RNG.GetInstance();
 
             if (villager.Health == 0)
             {
@@ -74,19 +74,23 @@ namespace PeopleVilleTickManager
 
             if (ran.Next(0, 100) == 0) villager.Trade();
 
+            if (ran.Next(0, 2) == 0)
+            {
+                if (!villager.IsWorking()) villager.Food = Math.Clamp(villager.Food - ran.Next(4, 7), 0, 100);
+            }
+            else
+            {
+                villager.Food = Math.Clamp(villager.Food - ran.Next(4, 7), 0, 100);
+            }
+
             if (!villager.IsWorking())
             {
-                // Meant to simulate that the villager eats food supplied by their work, hunger drain during work is turned off to not trigger the Eat method.
-                if (!villager.IsWorking()) villager.Food = Math.Clamp(villager.Food - 5, 0, 100);
-
-                //Math.Clamp(villager.Food -= villager.IsWorking() ? 5 : 2, 0, 100);
-
                 // If villager has less than 5 food items, buy more. This should prevent villagers from starving to death too easily.
                 if (villager.GetAmountOfInventoryItems(ItemCategory.Food) <= 5) villager.BuyFood();
             }
 
             // Drain health if villager is starving.
-            if (villager.Food == 0) villager.LoseHealth(2);
+            if (villager.Food == 0) villager.LoseHealth(ran.Next(1,4));
 
             // Eat if villager owns food.
             if (villager.Food <= 25 && villager.GetAmountOfInventoryItems(ItemCategory.Food) > 0) villager.Eat();

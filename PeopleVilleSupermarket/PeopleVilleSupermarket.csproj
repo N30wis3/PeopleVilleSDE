@@ -6,13 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\PeopleVilleEngine\PeopleVilleEngine.csproj" />
-    <ProjectReference Include="..\PeopleVilleMovement\PeopleVilleMovement.csproj" />
-  </ItemGroup>
-
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="copy /Y &quot;$(TargetDir)$(ProjectName).*&quot; &quot;$(SolutionDir)PeopleVilleEngine\lib&quot;" />
   </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PeopleVilleEngine\PeopleVilleEngine.csproj" />
+  </ItemGroup>
 
 </Project>
