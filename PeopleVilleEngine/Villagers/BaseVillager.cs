@@ -14,7 +14,7 @@ public abstract class BaseVillager
     public bool HasHome() => Home != null;
     public List<Item> Items { get; set; } = new List<Item>();
     public int Food { get; set; } = 100;
-    public int Money { get; set; } = 100;
+    public int Money { get; set; } = 1000;
     public int Health { get; set; } = 100;
     public ILocation WorkPlace { get; set; }
 

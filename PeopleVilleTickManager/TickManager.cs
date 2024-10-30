@@ -35,25 +35,18 @@ namespace PeopleVilleTickManager
 
         private void HandleTick(int tickCount)
         {
-            Console.WriteLine($"\nTick {tickCount}: Game state updated. Day {day}, hour {hour}");
+            Console.WriteLine($"\nTick {tickCount}: Day {day}, hour {hour}");
+
+            if (hour == 24)
+            {
+                hour = 0;
+                day++;
+            }
 
             if (village.CountPopulation() == 0)
             {
                 Console.WriteLine($"All villagers have died, amount of days passed: {day}");
                 tickSystem.OnTick -= HandleTick;
-            }
-
-            if (hour >= 24) // Reset hour and increment day at the end of a full day
-            {
-                hour = 0;
-                foreach (var location in village.Locations)
-                {
-                    foreach (var villager in location.Villagers())
-                    {
-                        villager.Money = villager.
-                    }
-                }
-                day++;
             }
 
             foreach (var location in village.Locations)
@@ -69,7 +62,7 @@ namespace PeopleVilleTickManager
         private void ProcessVillagerActions(ILocation location, BaseVillager villager)
         {
             // Function: y = (0.1 * x)^2 + 1000.
-            int deathChance = Convert.ToInt32(Math.Round(Math.Pow(Math.Round(0.1f * villager.Age), 2) + 1000)); // A 40 year old has around a 0,15% chance of dying randomly. 
+            int deathChance = Convert.ToInt32(Math.Round(Math.Pow(0.1f * villager.Age, 2)+ 1000)); // A 40 year old has around a 0,15% chance of dying randomly. 
 
             RNG ran = RNG.GetInstance();
 
@@ -88,7 +81,6 @@ namespace PeopleVilleTickManager
             {
                 if (villager.Location != village.Locations.Find(location => location.Name == "Work"))
                 {
-                    Console.WriteLine($"{villager.FullName()} has gone to work.");
                     villagerMover.MoveVillager(villager, village.Locations.Find(location => location.Name == "Work"));
                 }
             }
@@ -100,7 +92,7 @@ namespace PeopleVilleTickManager
                 }
             }
 
-            if (ran.Next(0, 100) == 0) villager.Trade();
+            if (ran.Next(0, 26) == 0) villager.Trade();
 
             if (ran.Next(0, 2) == 0)
             {
