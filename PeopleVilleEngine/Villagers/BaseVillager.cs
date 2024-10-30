@@ -13,12 +13,10 @@ public abstract class BaseVillager
     public ILocation? Location { get; set; } = null;
     public bool HasHome() => Home != null;
     public List<Item> Items { get; set; } = new List<Item>();
-
-    // custom test variables, not made for final build
-
-    public int Food { get; set; }
-    public int Money { get; set; }
-    public int Health { get; set; }
+    public int Food { get; set; } = 100;
+    public int Money { get; set; } = 100;
+    public int Health { get; set; } = 100;
+    public ILocation WorkPlace { get; set; }
 
 
     protected BaseVillager(Village village)
@@ -31,9 +29,6 @@ public abstract class BaseVillager
         {
             Items.Add(ITH.GetRandomItem());
         }
-        Food = 100;
-        Money = 100;
-        Health = 100;
     }
 
     public override string ToString()
@@ -134,7 +129,7 @@ public abstract class BaseVillager
                     villager.Money += wantedItem.Value;
                     Items.Add(wantedItem);
                     Money -= wantedItem.Value;
-                    Console.WriteLine($"{FullName()} bought {wantedItem.Name.ToLower()} off of {villager.FullName()} for {wantedItem.Value}");
+                    Console.WriteLine($"{FullName()} bought {wantedItem.Name.ToLower()} off of {villager.FullName()} for {wantedItem.Value}$");
                 }
             }
         }

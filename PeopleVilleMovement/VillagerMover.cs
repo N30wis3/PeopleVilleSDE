@@ -5,14 +5,19 @@ namespace PeopleVilleMovement
 {
     public class VillagerMover
     {
-        public void MoveVillager(BaseVillager villager, IHouse newLocation)
+        public void MoveVillager(BaseVillager villager, ILocation newLocation)
         {
             villager.Location = newLocation;
+            Console.WriteLine($"{villager.FullName()} moved to {newLocation.Name}.");
         }
 
         public void MoveVillagerHome(BaseVillager villager)
         {
-            villager.Location = villager.Home;
+            if (villager.Home != null)
+            {
+                villager.Location = villager.Home;
+                Console.WriteLine($"{villager.FullName()} went home.");
+            }
         }
     }
 }

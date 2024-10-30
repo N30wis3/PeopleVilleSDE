@@ -15,5 +15,8 @@ public interface IHouse : ILocation
 public interface IShop : ILocation
 {
     public List<Item> Items { get; set; }
+}
+public interface IWork : ILocation
+{
 
 }

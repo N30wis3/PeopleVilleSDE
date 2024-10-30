@@ -8,11 +8,23 @@
     ".NETCoreApp,Version=v8.0": {
       "PeopleVilleTickManager/1.0.0": {
         "dependencies": {
+          "Jobs": "1.0.0",
           "PeopleVilleEngine": "1.0.0",
           "PeopleVilleMovement": "1.0.0"
         },
         "runtime": {
           "PeopleVilleTickManager.dll": {}
+        }
+      },
+      "Jobs/1.0.0": {
+        "dependencies": {
+          "PeopleVilleEngine": "1.0.0"
+        },
+        "runtime": {
+          "Jobs.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
         }
       },
       "PeopleVilleEngine/1.0.0": {
@@ -38,6 +50,11 @@
   },
   "libraries": {
     "PeopleVilleTickManager/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Jobs/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

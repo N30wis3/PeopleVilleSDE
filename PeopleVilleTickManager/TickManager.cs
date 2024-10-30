@@ -1,6 +1,8 @@
-﻿using PeopleVilleEngine;
+﻿using Jobs;
+using PeopleVilleEngine;
 using PeopleVilleEngine.Items;
 using PeopleVilleEngine.Locations;
+using PeopleVilleMovement;
 using System;
 using System.Collections.Generic;
 using System.IO.IsolatedStorage;
@@ -12,10 +14,13 @@ namespace PeopleVilleTickManager
     {
         private TickSystem tickSystem;
         private PeopleVilleEngine.Village village;
+        private PeopleVilleMovement.VillagerMover villagerMover;
 
         public TickManager(PeopleVilleEngine.Village village)
         {
+            villagerMover = new();
             this.village = village;
+            JobsHandler jobHandler = new(village);
             tickSystem = new(500); // Ticks every second
             tickSystem.OnTick += HandleTick;
         }
@@ -41,6 +46,13 @@ namespace PeopleVilleTickManager
             if (hour >= 24) // Reset hour and increment day at the end of a full day
             {
                 hour = 0;
+                foreach (var location in village.Locations)
+                {
+                    foreach (var villager in location.Villagers())
+                    {
+                        villager.Money = villager.
+                    }
+                }
                 day++;
             }
 
@@ -70,6 +82,22 @@ namespace PeopleVilleTickManager
             {
                 villager.Die("unknown causes");
                 return;
+            }
+
+            if (hour >= 9 && hour <= 17)
+            {
+                if (villager.Location != village.Locations.Find(location => location.Name == "Work"))
+                {
+                    Console.WriteLine($"{villager.FullName()} has gone to work.");
+                    villagerMover.MoveVillager(villager, village.Locations.Find(location => location.Name == "Work"));
+                }
+            }
+            else
+            {
+                if (villager.Location == village.Locations.Find(location => location.Name == "Work"))
+                {
+                    villagerMover.MoveVillagerHome(villager);
+                }
             }
 
             if (ran.Next(0, 100) == 0) villager.Trade();

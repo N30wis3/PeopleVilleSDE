@@ -19,7 +19,6 @@ public class VillagerCreatorAdult : IVillagerCreator
 
         home.Villagers().Add(adult);
         adult.Home = home;
-
         //Add to village
         village.Villagers.Add(adult);
         return true;
